@@ -1,5 +1,7 @@
 package Chart::OFC2;
 
+=encoding utf8
+
 =head1 NAME
 
 Chart::OFC2 - Generate html and data files for use with Open Flash Chart version 2
@@ -23,8 +25,10 @@ OFC2 bar chart data:
     
     my $chart = Chart::OFC2->new(
         'title'  => 'Bar chart test',
-        'x_axis' => {
-            'labels' => [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
+        x_axis => {
+            labels => {
+                labels => [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
+            }
         },
     );
     
@@ -59,8 +63,9 @@ F<t/output/pie-data.json>, F<t/output/hbar-data.json> are the data files.
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::StrictConstructor;
+use MooseX::Aliases;
 
-our $VERSION = '0.05';
+our $VERSION = '0.07';
 
 use Carp::Clan 'croak';
 use JSON::XS qw();
@@ -83,12 +88,9 @@ use List::MoreUtils 'any';
     has 'elements'       => (is => 'rw', isa => 'ArrayRef', default => sub{[]}, lazy => 1);
     has 'extremes'       => (is => 'rw', isa => 'Chart::OFC2::Extremes',  default => sub { Chart::OFC2::Extremes->new() }, lazy => 1);
     has 'tooltip'        => (is => 'rw', isa => 'Chart::OFC2::ToolTip',);
+    has 'bg_colour'      => (is => 'rw', isa => 'Str',  default => 'f8f8d8', alias => 'bg_color' );
 
 =cut
-
-subtype 'Chart.OFC2.NaturalInt'
-    => as 'Int'
-    => where { $_ > 0 };
 
 has 'data_load_type' => (is => 'rw', isa => 'Str',  default => 'inline_js');
 has 'bootstrap'      => (is => 'rw', isa => 'Bool', default => '1');
@@ -99,8 +101,7 @@ has 'elements'       => (is => 'rw', isa => 'ArrayRef', default => sub{[]}, lazy
 has 'extremes'       => (is => 'rw', isa => 'Chart::OFC2::Extremes',  default => sub { Chart::OFC2::Extremes->new() }, lazy => 1);
 has '_json'          => (is => 'rw', isa => 'Object',  default => sub { JSON::XS->new->pretty(1)->convert_blessed(1) }, lazy => 1);
 has 'tooltip'        => (is => 'rw', isa => 'Chart::OFC2::ToolTip', coerce  => 1);
-has 'bg_colour'      => (is => 'rw', isa => 'Str',  default => 'f8f8d8');
-
+has 'bg_colour'      => (is => 'rw', isa => 'Str',  default => 'f8f8d8', alias => 'bg_color' );
 
 =head1 METHODS
 
@@ -324,6 +325,16 @@ sub smooth {
     return smoother_number($number, $axis_type);
 }
 
+=head2 bg_color()
+
+Same as bg_colour().
+
+=cut
+
+sub bg_color {
+    &bg_colour;
+}
+
 1;
 
 
@@ -337,7 +348,26 @@ file in html every time you generate new data. Like C<"data.json?".time()>.
 
 =head1 SEE ALSO
 
-L<Chart::OFC>, L<http://teethgrinder.co.uk/open-flash-chart-2/>, L<http://svn.cle.sk/repos/pub/cpan/Chart-OFC2/trunk/>
+L<Chart::OFC>, L<http://teethgrinder.co.uk/open-flash-chart-2/>, L<http://github.com/jozef/chart-ofc2/>
+
+=head1 AUTHOR
+
+Jozef Kutej C<< <jkutej@cpan.org> >>
+
+I've used some of the code from the F<perl-ofc-library/open_flash_chart.pm>
+that is shipped together with all the rest OFC2 files.
+
+=head1 CONTRIBUTORS
+ 
+The following people have contributed to the Chart::OFC2 by commiting their
+code, sending patches, reporting bugs, asking questions, suggesting useful
+advices, nitpicking, chatting on IRC or commenting on my blog (in no particular
+order):
+
+    Rodney Webster
+    John Goulah C<< <jgoulah@cpan.org> >>
+    Noë Snaterse
+    Adam J. Foxson C<< <atom@cpan.org> >>
 
 =head1 SUPPORT
 
@@ -369,20 +399,8 @@ L<http://search.cpan.org/dist/Chart-OFC2>
 
 =back
 
-=head1 ACKNOWLEDGEMENTS
-
-Thanks to John Goulah C<< <jgoulah@cpan.org> >> for his patches
-and suggestions (#49416, #48821, #48376, #48380).
-
 =head1 COPYRIGHT AND LICENSE
 
 GNU GPL
-
-=head1 AUTHOR
-
-Jozef Kutej C<< <jkutej@cpan.org> >>
-
-I've used some of the code from the F<perl-ofc-library/open_flash_chart.pm>
-that is shipped together with all the rest OFC2 files.
 
 =cut

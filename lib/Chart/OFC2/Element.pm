@@ -20,7 +20,7 @@ use MooseX::StrictConstructor;
 use Chart::OFC2::Extremes;
 use Scalar::Util 'looks_like_number', 'reftype';
 
-our $VERSION = '0.05';
+our $VERSION = '0.07';
 
 =head1 PROPERTIES
 
@@ -39,6 +39,7 @@ our $VERSION = '0.05';
     has 'tip'          => (is => 'rw', isa => 'Str',);
     has 'alpha'        => (is => 'rw', isa => 'Num',);
     has 'colour'       => (is => 'rw', isa => 'Str',);
+    has 'text'         => (is => 'rw', isa => 'Str',);
 
 =cut
 
@@ -57,6 +58,7 @@ has 'on-click'     => (is => 'rw', isa => 'Str', );
 has 'tip'          => (is => 'rw', isa => 'Str',);
 has 'alpha'        => (is => 'rw', isa => 'Num',);
 has 'colour'       => (is => 'rw', isa => 'Str',);
+has 'text'         => (is => 'rw', isa => 'Str',);
 
 
 =head1 METHODS
